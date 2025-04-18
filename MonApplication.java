@@ -1,10 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class MonApplication extends JComponent {
     int line,column;
     Image gaufreNormal,gaufreMange;
-    int [][]grille; //0 pour gaufre, 1 pour croque
+    int [] grille;
     int poisonX,poisonY;
     int widthG,heightG;
     MonApplication(int ligne, int colonne) {
@@ -13,23 +14,23 @@ public class MonApplication extends JComponent {
 
         this.line=ligne;
         this.column=colonne;
-        grille=new int[ligne][colonne];
+        this.grille=new int[colonne];
+
     }
 
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         widthG=getWidth()/column;
         heightG=getHeight()/line;
+        grille[1]=3;
 
-        for (int i=0;i<line;i++) {
-            for (int j=0;j<column;j++) {
-                if (grille[i][j]==0) {
-                    g2d.drawImage(gaufreNormal,j*widthG,i*heightG,widthG,heightG,null);
+        for (int j=0;j<column;j++) {
+            for (int i=0; i<grille[j]; i++) {
+                g2d.drawImage(gaufreMange,j*widthG,getHeight()-((i+1)*heightG),widthG,heightG,null);
+            }
+            for (int i=0;i<line-grille[j];i++){
+                g2d.drawImage(gaufreNormal,j*widthG,i*heightG,widthG,heightG,null);
 
-                }else{
-                    g2d.drawImage(gaufreMange,j*widthG,i*heightG,widthG,heightG,null);
-
-                }
             }
         }
 
