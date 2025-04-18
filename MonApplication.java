@@ -3,12 +3,14 @@ import java.awt.*;
 
 public class MonApplication extends JComponent {
     int line,column;
-    Image image;
+    Image gaufreNormal,gaufreMange;
     int [][]grille; //0 pour gaufre, 1 pour croque
     int poisonX,poisonY;
-    int sizeX=80,sizeY=80;
+    int widthG,heightG;
     MonApplication(int ligne, int colonne) {
-        image= Gaufre.charge("gaufre.png");
+        gaufreNormal= Gaufre.charge("gaufre.png");
+        gaufreMange= Gaufre.charge("gaufremange.png");
+
         this.line=ligne;
         this.column=colonne;
         grille=new int[ligne][colonne];
@@ -16,9 +18,18 @@ public class MonApplication extends JComponent {
 
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
+        widthG=getWidth()/column;
+        heightG=getHeight()/line;
+
         for (int i=0;i<line;i++) {
             for (int j=0;j<column;j++) {
-                g2d.drawImage(image,i*sizeX,j*sizeY,sizeX,sizeY,null);
+                if (grille[i][j]==0) {
+                    g2d.drawImage(gaufreNormal,j*widthG,i*heightG,widthG,heightG,null);
+
+                }else{
+                    g2d.drawImage(gaufreMange,j*widthG,i*heightG,widthG,heightG,null);
+
+                }
             }
         }
 
