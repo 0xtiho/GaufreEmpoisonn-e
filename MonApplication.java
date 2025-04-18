@@ -37,7 +37,7 @@ public class MonApplication extends JComponent {
     }
 
     public static void demarre(JFrame frame, int ligne, int colonne) {
-        MonApplication app = new MonApplication(ligne, colonne);  // Crée une instance de Examen
+        MonApplication app = new MonApplication(ligne, colonne);  // Cree une instance de Examen
         frame.add(app);
     }
 }
