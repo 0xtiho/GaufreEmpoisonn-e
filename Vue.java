@@ -35,17 +35,20 @@ public class Vue extends JComponent {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
+        
         if (gauffre.Perdu == 0) {
             widthG = getWidth() / column;
             heightG = getHeight() / line;
             g2d.drawImage(poison, 0, 0, widthG, heightG, null);
             for (int j = 0; j < column; j++) {
-                for (int i = 0; i < gauffre.getGauffre()[j]; i++) {
-                    g2d.drawImage(gaufreMange, j * widthG, getHeight() - ((i + 1) * heightG), widthG, heightG, null);
-                }
-                for (int i = 0; i < line - gauffre.getGauffre()[j]; i++) {
-                    if (!(i == 0 && j == 0)) {
+                for (int i = 0; i < line; i++) {
+                    if (i == 0 && j == 0) continue; 
+                    if (i < line - gauffre.getGauffre()[j]) {
+                        // Case non mangée
                         g2d.drawImage(gaufreNormal, j * widthG, i * heightG, widthG, heightG, null);
+                    } else {
+                        // Case mangée
+                        g2d.drawImage(gaufreMange, j * widthG, i * heightG, widthG, heightG, null);
                     }
                 }
             }
