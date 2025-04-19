@@ -20,7 +20,7 @@ public class MonApplication implements Runnable{
         JFrame frame = new JFrame(" Miam Miam" );
         Jeu jeu = new Jeu(frame, 6, 7);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
+        frame.setSize(1000, 1000);
         frame.setVisible(true);
     }
 

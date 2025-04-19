@@ -10,6 +10,7 @@ public class Gauffre {
     public final int VIDE = 1;
     public final int CHOCOLAT = 0;
     private Point mouseXY;
+    int Perdu=0;
 
 
 
@@ -21,6 +22,15 @@ public class Gauffre {
 
 
 
+    }
+    public void setGauffre(int ind,int val){
+        gauffre[ind]=val;
+    }
+    public void resetgame(){
+        for(int i=0;i<colonne;i++){
+            setGauffre(i,0);
+        }
+        Perdu=0;
     }
 
     public void setMouseXY(Point mouseXY) {
@@ -43,14 +53,14 @@ public class Gauffre {
         return colonne;
     }
 
-    private boolean peut_manger(int l ,int c){
-        return (gauffre[c]<l);
+    public boolean peut_manger(int x ,int y){
+        return (ligne-gauffre[x]>y && (x!=0 || y!=0));
     }
-    public void manger(int l , int c){
-        if(peut_manger(l,c)){
-            for (int i=c;i<colonne;i++){
-                if(gauffre[i]<ligne-l){
-                    gauffre[i]=ligne-l;
+    public void manger(int x , int y){
+        if(peut_manger(x,y)){
+            for (int i=x;i<colonne;i++){
+                if(gauffre[i]<ligne-y){
+                    gauffre[i]=ligne-y;
                 }
             }
         }
