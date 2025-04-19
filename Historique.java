@@ -5,10 +5,10 @@ import java.util.Stack;
 
 public class Historique {
     private Stack<Point> annule;
-    private Queue<Point> refait;
+    private Stack<Point> refait;
     public Historique() {
         annule = new Stack<>();
-        refait = new LinkedList<>();
+        refait = new Stack<>();
     }
     public boolean annule() {
         if(peut_annule()){
@@ -23,7 +23,7 @@ public class Historique {
         Point p=null ;
 
         if (peut_refaire()) {
-            p=refait.poll();
+            p=refait.pop();
             annule.push(p);
         }
         return p;
