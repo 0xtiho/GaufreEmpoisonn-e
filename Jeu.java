@@ -20,11 +20,13 @@ public class Jeu {
         panel.add(b1);
         panel.add(b2);
         panel.add(b3);
-        vue.setLayout(new BorderLayout());
+        JPanel container=new JPanel();
+        container.setLayout(new BorderLayout());
+        container.add(panel,BorderLayout.SOUTH);
         vue.addMouseMotionListener(controleSouris);
-        vue.add(panel,BorderLayout.SOUTH);
+        container.add(vue);
         System.out.println(frame.getWidth()+' '+frame.getHeight());
-        frame.add(vue);
+        frame.add(container);
     }
 
 }
