@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Jeu {
     Vue vue;
@@ -8,7 +10,7 @@ public class Jeu {
 
     public Jeu(JFrame frame, int ligne, int colonne){
         Gauffre g = new Gauffre(ligne,colonne);
-        vue = new Vue(ligne, colonne,g);  // Crée une instance de Examen
+        vue = new Vue(ligne, colonne,g); 
         controleSouris=new Controle_souris(g,vue);
 
         //ici jai fixer taille gauffre 
@@ -27,10 +29,23 @@ public class Jeu {
 
         //jai fais ca pour respecter taille frame total de 500x500 
         panel.setPreferredSize(new Dimension(500, 40));
+        
+
+        //ajout de l'ActionListener au bouton RESTART
+        b1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                g.RESTART();
+                vue.repaint();
+            }
+        });
+
 
         frame.setLayout(new BorderLayout());
         vue.setLayout(new BorderLayout());
-        vue.addMouseMotionListener(controleSouris);
+
+        //jl enlever car toute gestion de souris est dans controleSouris et c'est lui qui gere le clic+mouvement souris
+        //vue.addMouseMotionListener(controleSouris);
         
         // et la on dois mettre la vue au centre et panel en bas
         frame.add(vue, BorderLayout.CENTER);

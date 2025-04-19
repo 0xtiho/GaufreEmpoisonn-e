@@ -48,7 +48,9 @@ public class Vue extends JComponent {
             System.out.println(p);
             for (int j=p.x;j<column;j++) {
                 for (int i =p.y; i < line; i++) {
-                    g2d.drawImage(gaufreSelect, j * widthG, (i * heightG), widthG, heightG, null);
+                    if (i < line - grille[j]){ //juste pour les cases non mangee
+
+                    g2d.drawImage(gaufreSelect, j * widthG, (i * heightG), widthG, heightG, null);}
                 }
             }
 

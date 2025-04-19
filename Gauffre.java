@@ -71,6 +71,14 @@ public class Gauffre {
             System.out.println();
         }
     }
+
+    public void RESTART() {
+        for (int i = 0; i < colonne; i++) {
+            gauffre[i] = 0;//CHOCOLAT
+        }
+        mouseXY = null; //reinitialise position de souris 
+    }
+
     public static void main(String[] args) {
         Gauffre gauffre1 = new Gauffre(6,4);
         gauffre1.afficher();
