@@ -19,6 +19,7 @@ public class controlSouris implements MouseListener {
         if (!(gauffre.peut_manger(0,1)||gauffre.peut_manger(1,0) )){
             gauffre.Perdu=1;
         }
+
         vue.repaint();
 
     }

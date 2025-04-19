@@ -16,7 +16,7 @@ public class contolMouseMotion implements MouseMotionListener {
         int x = e.getX();
         int y = e.getY();
         gauffre.setMouseXY(new Point(x,y));
-        vue.repaint();
+        vue.redessine();
 
     }
 

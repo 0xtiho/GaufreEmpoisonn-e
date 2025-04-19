@@ -4,7 +4,6 @@ import java.awt.*;
 public class Vue extends JComponent {
     int line, column;
     Image gaufreNormal, gaufreMange, poison, gaufreSelect;
-    int[] grille;
     int poisonX, poisonY;
     int widthG, heightG;
     Gauffre gauffre;
@@ -21,8 +20,12 @@ public class Vue extends JComponent {
         this.line = ligne;
         this.column = colonne;
         this.gauffre = g;
-        this.grille = g.getGauffre();
 
+
+    }
+
+    public void redessine(){
+        repaint();
     }
 
     Point pixToCord(Point p) {
@@ -37,11 +40,10 @@ public class Vue extends JComponent {
             heightG = getHeight() / line;
             g2d.drawImage(poison, 0, 0, widthG, heightG, null);
             for (int j = 0; j < column; j++) {
-                for (int i = 0; i < grille[j]; i++) {
-
+                for (int i = 0; i < gauffre.getGauffre()[j]; i++) {
                     g2d.drawImage(gaufreMange, j * widthG, getHeight() - ((i + 1) * heightG), widthG, heightG, null);
                 }
-                for (int i = 0; i < line - grille[j]; i++) {
+                for (int i = 0; i < line - gauffre.getGauffre()[j]; i++) {
                     if (!(i == 0 && j == 0)) {
                         g2d.drawImage(gaufreNormal, j * widthG, i * heightG, widthG, heightG, null);
                     }

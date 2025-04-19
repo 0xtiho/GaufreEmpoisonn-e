@@ -11,6 +11,6 @@ public class controlRestart implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e){
         g.resetgame();
-        vue.repaint();
+        vue.redessine();
     }
 }

@@ -12,14 +12,18 @@ public class Jeu {
         controleSouris=new contolMouseMotion(g,vue);
         controlSouris controlSouris=new controlSouris(g,vue);
         controlRestart restart=new controlRestart(vue,g);
+        controlannule annule=new controlannule(vue,g);
+        controlrefais refais=new controlrefais(vue,g);
         JPanel panel = new JPanel();
         JButton b1=new JButton("RESTART");
         b1.setFocusable(false);
         b1.addActionListener(restart);
         JButton b2=new JButton("<-");
         b2.setFocusable(false);
+        b2.addActionListener(annule);
         JButton b3=new JButton("->");
         b3.setFocusable(false);
+        b3.addActionListener(refais);
         panel.add(b1);
         panel.add(b2);
         panel.add(b3);
