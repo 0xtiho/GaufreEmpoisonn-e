@@ -10,6 +10,10 @@ public class Jeu {
         Gauffre g = new Gauffre(ligne,colonne);
         vue = new Vue(ligne, colonne,g);  // Crée une instance de Examen
         controleSouris=new Controle_souris(g,vue);
+
+        //ici jai fixer taille gauffre 
+        vue.setPreferredSize(new Dimension(500, 460));
+
         JPanel panel = new JPanel();
         JButton b1=new JButton("RESTART");
         b1.setFocusable(false);
@@ -20,11 +24,18 @@ public class Jeu {
         panel.add(b1);
         panel.add(b2);
         panel.add(b3);
+
+        //jai fais ca pour respecter taille frame total de 500x500 
+        panel.setPreferredSize(new Dimension(500, 40));
+
+        frame.setLayout(new BorderLayout());
         vue.setLayout(new BorderLayout());
         vue.addMouseMotionListener(controleSouris);
-        vue.add(panel,BorderLayout.SOUTH);
-        System.out.println(frame.getWidth()+' '+frame.getHeight());
-        frame.add(vue);
+        
+        // et la on dois mettre la vue au centre et panel en bas
+        frame.add(vue, BorderLayout.CENTER);
+        frame.add(panel, BorderLayout.SOUTH);
+        
     }
 
 }
