@@ -46,7 +46,7 @@ public class Controle_souris implements MouseMotionListener, MouseListener{
                     grille[j] = gauffre.get_ligne() - lig;
                 }
             }
-            // Reinitialiser la position de la souris pour supprimer la surbrillance rouge
+            // Reinitialiser la position de la souris pour supprimer le rouge
             gauffre.setMouseXY(null);
             vue.repaint();
         }
