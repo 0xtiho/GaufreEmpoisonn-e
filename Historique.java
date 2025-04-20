@@ -1,59 +1,58 @@
 import java.awt.*;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Stack;
 
 public class Historique {
-    private Stack<Point> annule;
-    private Stack<Point> refait;
+    private Stack<EtatGauffre> annule;
+    private Stack<EtatGauffre> refait;
+    
     public Historique() {
         annule = new Stack<>();
         refait = new Stack<>();
     }
-    public boolean annule() {
-        if(peut_annule()){
-            Point p =annule.pop();
-            refait.add(p);
-            return true;
+    
+
+    public EtatGauffre annule() {
+        if (peut_annule()) {
+            EtatGauffre etat = annule.pop();
+            refait.push(etat);
+            return etat;
         }
-        return false;
-
+        return null;
     }
-    public Point refait() {
-        Point p=null ;
+    
 
+    public EtatGauffre refait() {
         if (peut_refaire()) {
-            p=refait.pop();
-            annule.push(p);
+            EtatGauffre etat = refait.pop();
+            annule.push(etat);
+            return etat;
         }
-        return p;
+        return null;
     }
+    
 
-    public Stack<Point> getAnnule() {
-        return annule;
+    public void ajoute(EtatGauffre etat) {
+        annule.push(etat);
     }
+    
 
-    public void enleve_refait(){
-        if(peut_refaire()){
+    public void enleve_refait() {
+        if (!refait.isEmpty()) {
             refait.clear();
         }
+    }
+    
 
+    public boolean peut_annule() {
+        return !annule.isEmpty();
     }
-    private boolean peut_annule(){
-        if(annule.isEmpty()){
-            return false;
-        }
-        return true;
-    }
-    private boolean peut_refaire(){
-        if(refait.isEmpty()){
-            return false;
-        }
-        return true;
-    }
-    public void ajoute(Point p){
-        annule.push(p);
+    
+
+    public boolean peut_refaire() {
+        return !refait.isEmpty();
     }
 
-
+    public Stack<EtatGauffre> getAnnule() {
+        return annule;
+    }
 }

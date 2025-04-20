@@ -1,11 +1,12 @@
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Gauffre {
 
     private int[] gauffre;
     private int ligne;
-    private int colonne ;
+    private int colonne;
     Historique historique;
     public final int POISON = 2;
     public final int VIDE = 1;
@@ -13,22 +14,11 @@ public class Gauffre {
     private Point mouseXY;
     int Perdu=0;
 
-
-
     public Gauffre(int l, int c) {
-
         this.colonne = c;
         this.ligne = l;
         gauffre = new int[c];
         historique = new Historique();
-
-    }
-    public void mise_a_jour(){
-        int[] tmp = new int[colonne];
-        for(Point p : historique.getAnnule()){
-            tmp=mange_tab(p.x, p.y,tmp);
-        }
-        gauffre=tmp;
     }
 
     public void affichergrille(){
@@ -39,30 +29,34 @@ public class Gauffre {
     }
 
     public void annule(){
-        if(historique.annule()){
-            mise_a_jour();
+        EtatGauffre etat = historique.annule();
+        if(etat != null){
+            Map<Integer, Integer> changements = etat.getChangements();
+            for (Map.Entry<Integer, Integer> entry : changements.entrySet()) {
+                int colonne = entry.getKey();
+                int ancienneValeur = entry.getValue();
+                gauffre[colonne] = ancienneValeur;
+            }
+            verifierPerdu();
         }
-
-
     }
-     public void refait(){
-        Point p = historique.refait();
-        if (p!=null){
+
+    public void refait(){
+        EtatGauffre etat = historique.refait();
+        if (etat != null){
+            Point p = etat.getMouvement();
             remange(p.x, p.y);
         }
-
-
-
-     }
-
-
-    public void setGauffre(int ind,int val){
-        gauffre[ind]=val;
     }
+
+    public void setGauffre(int ind, int val){
+        gauffre[ind] = val;
+    }
+    
     public void resetgame(){
         gauffre = new int[colonne];
         historique = new Historique();
-        Perdu=0;
+        Perdu = 0;
     }
 
     public void setMouseXY(Point mouseXY) {
@@ -77,44 +71,51 @@ public class Gauffre {
         return gauffre;
     }
 
-
     public int get_ligne(){
         return ligne;
     }
+    
     public int get_colonne(){
         return colonne;
     }
 
-    public boolean peut_manger(int x ,int y){
-        return (ligne-gauffre[x]>y && (x!=0 || y!=0));
+    public boolean peut_manger(int x, int y){
+        return (ligne-gauffre[x] > y && (x != 0 || y != 0));
     }
-    public void manger(int x , int y){
+    
+    public void manger(int x, int y){
         if (peut_manger(x, y)) {
-            historique.ajoute(new Point(x, y));
-
-            historique.enleve_refait();
-
-
-            gauffre=mange_tab(x, y,gauffre);
-        }
-    }
-    public void remange(int x , int y){
-        if (peut_manger(x, y)) {
-            gauffre=mange_tab(x, y,gauffre);
-        }
-    }
-
-    private int[] mange_tab(int x , int y,int[] tab){
-
-            int[] tmp = tab.clone();
+            EtatGauffre nouvelEtat = new EtatGauffre(new Point(x, y));
+            
             for (int i = x; i < colonne; i++) {
-                if (tmp[i] < ligne - y) {
-                    tmp[i] = ligne - y;
+                if (gauffre[i] < ligne - y) {
+                    nouvelEtat.ajouterChangement(i, gauffre[i]);
                 }
             }
-            return tmp;
-
-
+            
+            historique.ajoute(nouvelEtat);
+            historique.enleve_refait();
+            
+            for (int i = x; i < colonne; i++) {
+                if (gauffre[i] < ligne - y) {
+                    gauffre[i] = ligne - y;
+                }
+            }
+        }
+    }
+    
+    public void remange(int x, int y){
+        if (peut_manger(x, y)) {
+            for (int i = x; i < colonne; i++) {
+                if (gauffre[i] < ligne - y) {
+                    gauffre[i] = ligne - y;
+                }
+            }
+        }
+    }
+    
+    private void verifierPerdu() {
+        Perdu = (!(peut_manger(0,1) || peut_manger(1,0))) ? 1 : 0;
     }
 
     public void afficher() {
@@ -131,13 +132,4 @@ public class Gauffre {
             System.out.println();
         }
     }
-   /* public static void main(String[] args) {
-        Gauffre gauffre1 = new Gauffre(6,4);
-        gauffre1.afficher();
-        System.out.println();
-        gauffre1.manger(2 ,2);
-        gauffre1.afficher();
-
-    }*/
-
 }
