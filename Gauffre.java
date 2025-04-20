@@ -60,9 +60,8 @@ public class Gauffre {
         gauffre[ind]=val;
     }
     public void resetgame(){
-        for(int i=0;i<colonne;i++){
-            setGauffre(i,0);
-        }
+        gauffre = new int[colonne];
+        historique = new Historique();
         Perdu=0;
     }
 
