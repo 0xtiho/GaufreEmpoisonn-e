@@ -1,72 +1,101 @@
-import javax.swing.*;
+package view;
+
 import java.awt.*;
-import javax.imageio.ImageIO;
+import javax.swing.*;
+import model.GaufreModel;
+import model.MonApplication;
 
-public class GaufreView extends JComponent implements GaufreModel.GaufreModelListener {
+public class GaufreView extends JPanel {
     private GaufreModel model;
-    private Image gaufreNormal, gaufreMange, poison;
-    private int widthG, heightG;
+    private int cellWidth;
+    private int cellHeight;
+    private Image gaufreNormal, gaufreMange, poison, gaufreSelect;
 
-    static Image charge(String nom) {
-    try {
-        return ImageIO.read(GaufreView.class.getClassLoader().getResourceAsStream("img/" + nom));
-    } catch (Exception e) {
-        System.err.println("Erreur imprévue : " + e.getMessage());
-        System.exit(1);
-        return null;
-    }
-}
-    
     public GaufreView(GaufreModel model) {
         this.model = model;
-        model.addListener(this);
         
-        // Load images
-        gaufreNormal = charge("gaufre.png");
-        gaufreMange = charge("gaufremange.png");
-        poison = charge("poison.png");
+        // Chargement des images
+        gaufreNormal = MonApplication.charge("gaufre.png");
+        gaufreMange = MonApplication.charge("gaufremange.png");
+        poison = MonApplication.charge("poison.png");
+        gaufreSelect = MonApplication.charge("carreSelection.png");
+        
+        setPreferredSize(new Dimension(500, 500));
+    }
+    
+    public Point getCell(int x, int y) {
+        if (cellWidth <= 0 || cellHeight <= 0) {
+            return null;
+        }
+        
+        int cellX = x / cellWidth;
+        int cellY = y / cellHeight;
+        
+        if (cellX >= 0 && cellX < model.getlines() && cellY >= 0 && cellY < model.getcolumns()) {
+            return new Point(cellX, cellY);
+        }
+        
+        return null;
     }
     
     @Override
-    public void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        widthG = getWidth() / model.getColumns();
-        heightG = getHeight() / model.getLines();
         
-        // Draw poison at position (0,0)
-        g2d.drawImage(poison, 0, 0, widthG, heightG, null);
+        int width = getWidth();
+        int height = getHeight();
         
-        int[] grille = model.getGrille();
-        for (int j = 0; j < model.getColumns(); j++) {
-            // Draw eaten squares
-            for (int i = 0; i < grille[j]; i++) {
-                g2d.drawImage(gaufreMange, j * widthG, getHeight() - ((i + 1) * heightG), 
-                              widthG, heightG, null);
+        cellWidth = width / model.getlines();
+        cellHeight = height / model.getcolumns();
+        
+        // Dessiner la grille
+        for (int y = 0; y < model.getcolumns(); y++) {
+            for (int x = 0; x < model.getlines(); x++) {
+                int cellState = model.getCellState(x, y);
+                Image img;
+                
+                if (x == 0 && y == 0) {
+                    img = poison;
+                } else if (cellState == GaufreModel.CELL_EATEN) {
+                    img = gaufreMange;
+                } else {
+                    img = gaufreNormal;
+                }
+                
+                g2d.drawImage(img, x * cellWidth, y * cellHeight, cellWidth, cellHeight, null);
             }
-            
-            // Draw normal waffle squares
-            for (int i = 0; i < model.getLines() - grille[j]; i++) {
-                if (!(i == 0 && j == 0)) {  // Skip poison position
-                    g2d.drawImage(gaufreNormal, j * widthG, i * heightG, 
-                                  widthG, heightG, null);
+        }
+        
+        // Dessiner la sélection si nécessaire
+        Point selection = model.getSelection();
+        if (selection != null) {
+            // Afficher la sélection
+            for (int y = selection.y; y < model.getcolumns(); y++) {
+                for (int x = selection.x; x < model.getlines(); x++) {
+                    if (model.isValidMove(x, y)) {
+                        g2d.drawImage(gaufreSelect, x * cellWidth, y * cellHeight, cellWidth, cellHeight, null);
+                    }
                 }
             }
         }
-    }
-    
-    @Override
-    public void modelChanged() {
-        repaint();
-    }
-    
-    // Get cell coordinates from screen position
-    public Point getCell(int x, int y) {
-        int col = x / widthG;
-        int row = y / heightG;
         
-        if (col >= 0 && col < model.getColumns() && row >= 0 && row < model.getLines()) {
-            return new Point(col, row);
+        // Afficher un message si le jeu est terminé
+        if (model.isGameOver()) {
+            // Fond semi-transparent
+            g2d.setColor(new Color(0, 0, 0, 180));
+            g2d.fillRect(0, 0, width, height);
+            
+            // Message de fin
+            String message = "Partie terminée!";
+            g2d.setColor(Color.WHITE);
+            g2d.setFont(new Font("Arial", Font.BOLD, 24));
+            
+            FontMetrics metrics = g2d.getFontMetrics();
+            int x = (width - metrics.stringWidth(message)) / 2;
+            int y = ((height - metrics.getHeight()) / 2) + metrics.getAscent();
+            
+            g2d.drawString(message, x, y);
         }
-        return null;
     }
 }

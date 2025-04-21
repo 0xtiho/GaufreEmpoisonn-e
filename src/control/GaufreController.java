@@ -1,6 +1,9 @@
+package control;
+
 import java.awt.*;
 import java.awt.event.*;
-
+import model.GaufreModel;
+import view.GaufreView;
 
 public class GaufreController extends MouseAdapter {
     private GaufreModel model;
