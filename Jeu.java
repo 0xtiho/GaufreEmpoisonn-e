@@ -1,23 +1,25 @@
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLOutput;
 
 public class Jeu {
-    int ligne,colonne;
-    Vue vue;
-    Gauffre gauffre;
-    contolMouseMotion controleSouris;
-    private final JFrame frame;
+    static int ligne;
+    static int colonne;
+    static Vue vue;
+    static Gauffre gauffre;
+    static contolMouseMotion controleSouris;
+    private static JFrame frame;
     public JLabel turn;
-    private JPanel boutonsPanel;
-    IA ia=null ;
-    private boolean vsAI = false; // false par défaut (2 joueurs)
+    private static JPanel boutonsPanel;
+    static IA ia=null ;
+    private static boolean vsAI = false; // false par défaut (2 joueurs)
 
     public Jeu(JFrame frame) {
         this.frame = frame;
         this.boutonsPanel = new JPanel();
         showConfigScreen();
     }
-    private void showConfigScreen() {
+    public static void showConfigScreen() {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
@@ -61,6 +63,14 @@ public class Jeu {
         modeGroup.add(twoPlayersBtn);
         twoPlayersBtn.setSelected(true); // Par défaut 2 joueurs
         modePanel.add(onePlayerBtn);
+        JComboBox<String> iaLevelCombo = new JComboBox<>(new String[]{"IA Facile", "IA Moyenne", "IA Difficile"});
+        iaLevelCombo.setFont(labelFont);
+        iaLevelCombo.setEnabled(false);
+        onePlayerBtn.addActionListener(e -> iaLevelCombo.setEnabled(true));
+        twoPlayersBtn.addActionListener(e -> {
+            iaLevelCombo.setEnabled(false);
+            iaLevelCombo.setSelectedIndex(0);});
+        modePanel.add(iaLevelCombo);
         modePanel.add(twoPlayersBtn);
         configPanel.add(modePanel, gbc);
 
@@ -105,6 +115,12 @@ public class Jeu {
                 ligne = Integer.parseInt(rowsField.getText());
                 colonne = Integer.parseInt(colsField.getText());
                 vsAI = onePlayerBtn.isSelected(); // Sauvegarde du mode de jeu
+                int iaLevel = iaLevelCombo.getSelectedIndex() + 1;
+                if (vsAI) {
+                    ia = new IA(gauffre, iaLevel);
+                } else {
+                    ia = null;
+                }
 
                 if (ligne < 2 || colonne < 2) {
                     JOptionPane.showMessageDialog(frame,
@@ -134,7 +150,7 @@ public class Jeu {
         frame.repaint();
     }
 
-    private void styleTextField(JTextField textField) {
+    private static void styleTextField(JTextField textField) {
         textField.setFont(new Font("Arial", Font.PLAIN, 16));
         textField.setHorizontalAlignment(JTextField.CENTER);
         textField.setBorder(BorderFactory.createCompoundBorder(
@@ -144,7 +160,7 @@ public class Jeu {
         textField.setPreferredSize(new Dimension(100, 30));
     }
 
-    private void styleButton(JButton button) {
+    private static void styleButton(JButton button) {
         button.setFont(new Font("Arial", Font.BOLD, 16));
         button.setBackground(new Color(70, 130, 180));
         button.setForeground(Color.WHITE);
@@ -165,7 +181,7 @@ public class Jeu {
             }
         });
     }
-    private void startGame() {
+    private static void startGame() {
         frame.getContentPane().removeAll();
         gauffre = new Gauffre(ligne, colonne);
         vue = new Vue(ligne, colonne, gauffre);

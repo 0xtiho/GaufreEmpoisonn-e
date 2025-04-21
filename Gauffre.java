@@ -28,12 +28,6 @@ public class Gauffre {
         }
         System.out.println();
     }
-    void setLigne(int x){
-        this.ligne=x;
-    }
-    void setColonne(int y){
-        this.colonne=y;
-    }
 
     public void annule(){
         EtatGauffre etat = historique.annule();
@@ -65,6 +59,7 @@ public class Gauffre {
         historique = new Historique();
         tour=1;
         Perdu = 0;
+        Jeu.showConfigScreen();
     }
 
     public void setMouseXY(Point mouseXY) {
@@ -96,8 +91,6 @@ public class Gauffre {
             if (b){
                 tour=1+((tour)%2);
             }
-
-
             EtatGauffre nouvelEtat = new EtatGauffre(new Point(x, y));
             
             for (int i = x; i < colonne; i++) {
