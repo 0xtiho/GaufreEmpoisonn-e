@@ -21,7 +21,7 @@ public class Jeu {
         controlrefais refais=new controlrefais(vue,g);
 
         //  1 pour aléatoire
-        ia = new IA(g, 2);
+        ia = new IA(g, 3);
         tourJoueur = true ;// humain qui commence 
 
         JPanel panel = new JPanel();
