@@ -31,7 +31,7 @@ public class Gauffre {
         return ligne;
     }
     public int get_colonne(){
-        return colonne;
+        return  colonne;
     }
 
     private boolean peut_manger(int l ,int c){
