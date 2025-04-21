@@ -13,6 +13,7 @@ public class Gauffre {
     public final int CHOCOLAT = 0;
     private Point mouseXY;
     int Perdu=0;
+    int tour=1;
 
     public Gauffre(int l, int c) {
         this.colonne = c;
@@ -26,6 +27,12 @@ public class Gauffre {
             System.out.print(gauffre[i]+" ");
         }
         System.out.println();
+    }
+    void setLigne(int x){
+        this.ligne=x;
+    }
+    void setColonne(int y){
+        this.colonne=y;
     }
 
     public void annule(){
@@ -56,6 +63,7 @@ public class Gauffre {
     public void resetgame(){
         gauffre = new int[colonne];
         historique = new Historique();
+        tour=1;
         Perdu = 0;
     }
 
@@ -85,6 +93,8 @@ public class Gauffre {
     
     public void manger(int x, int y){
         if (peut_manger(x, y)) {
+            tour=1+((tour)%2);
+
             EtatGauffre nouvelEtat = new EtatGauffre(new Point(x, y));
             
             for (int i = x; i < colonne; i++) {

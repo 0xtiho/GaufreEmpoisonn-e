@@ -7,7 +7,7 @@ public class Vue extends JComponent {
     int poisonX, poisonY;
     int widthG, heightG;
     Gauffre gauffre;
-
+    JLabel turn ;
     Vue(int ligne, int colonne, Gauffre g) {
 
 
@@ -20,6 +20,7 @@ public class Vue extends JComponent {
         this.line = ligne;
         this.column = colonne;
         this.gauffre = g;
+        this.turn=new JLabel("Tour Joueur "+ gauffre.tour);
 
 
     }
@@ -35,8 +36,9 @@ public class Vue extends JComponent {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        
         if (gauffre.Perdu == 0) {
+            turn.setText("Tour Joueur "+(String.valueOf(gauffre.tour)));
+            turn.setFont(new Font("Arial", Font.BOLD, 16));
             widthG = getWidth() / column;
             heightG = getHeight() / line;
             g2d.drawImage(poison, 0, 0, widthG, heightG, null);
@@ -65,54 +67,67 @@ public class Vue extends JComponent {
             }
         }
         else {
-            // Fond semi-transparent sombre
+            turn.setText("");
+            // Fond semi-transparent
             g2d.setColor(new Color(0, 0, 0, 180));
             g2d.fillRect(0, 0, getWidth(), getHeight());
 
-            // Rectangle pour le message
-            int rectWidth = 300;
-            int rectHeight = 150;
+// Rectangle du message
+            int rectWidth = 600;  // Légèrement plus large
+            int rectHeight = 180;
             int rectX = (getWidth() - rectWidth) / 2;
             int rectY = (getHeight() - rectHeight) / 2;
 
-            // Dégradé rouge pour le fond du message
+// Dégradé rouge amélioré
             GradientPaint gradient = new GradientPaint(
-                    rectX, rectY, new Color(200, 50, 50),
-                    rectX, rectY + rectHeight, new Color(150, 30, 30));
+                    rectX, rectY, new Color(220, 60, 60),
+                    rectX, rectY + rectHeight, new Color(170, 40, 40));
             g2d.setPaint(gradient);
             g2d.fillRoundRect(rectX, rectY, rectWidth, rectHeight, 30, 30);
 
-            // Bordure du rectangle
-            g2d.setColor(new Color(100, 20, 20));
-            g2d.setStroke(new BasicStroke(3));
+// Bordure plus visible
+            g2d.setColor(new Color(120, 30, 30));
+            g2d.setStroke(new BasicStroke(4));
             g2d.drawRoundRect(rectX, rectY, rectWidth, rectHeight, 30, 30);
 
-            // Texte "Vous avez perdu !"
+// --- TEXTE PRINCIPAL ---
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+// Ombre du texte
+            g2d.setColor(new Color(0, 0, 0, 120));
+            Font font = new Font("Arial", Font.BOLD, 28);
+            g2d.setFont(font);
+            int joueur =(gauffre.tour%2)+1;
+            String mainText = "Mister Joueur " + joueur + " vous avez gagné !";
+            int mainTextWidth = g2d.getFontMetrics().stringWidth(mainText);
+            g2d.drawString(mainText, rectX + (rectWidth - mainTextWidth)/2 + 2, rectY + 60 + 2);
+
+// Texte principal (blanc)
             g2d.setColor(Color.WHITE);
-            Font font = new Font("Arial", Font.BOLD, 24);
-            g2d.setFont(font);
+            g2d.drawString(mainText, rectX + (rectWidth - mainTextWidth)/2, rectY + 60);
 
-            String text = "Vous avez perdu !";
-            int textWidth = g2d.getFontMetrics().stringWidth(text);
-            int textX = rectX + (rectWidth - textWidth) / 2;
-            int textY = rectY + 50;
-            g2d.drawString(text, textX, textY);
+// --- SOUS-TEXTE ---
+            Font subFont = new Font("Arial", Font.PLAIN, 18);
+            g2d.setFont(subFont);
+            String subText = "Cliquez pour rejouer";
+            int subTextWidth = g2d.getFontMetrics().stringWidth(subText);
 
-            // Message supplémentaire
-            font = new Font("Arial", Font.PLAIN, 16);
-            g2d.setFont(font);
-            text = "Cliquez pour rejouer";
-            textWidth = g2d.getFontMetrics().stringWidth(text);
-            textX = rectX + (rectWidth - textWidth) / 2;
-            textY = rectY + 90;
-            g2d.drawString(text, textX, textY);
+// Ombre
+            g2d.setColor(new Color(0, 0, 0, 100));
+            g2d.drawString(subText, rectX + (rectWidth - subTextWidth)/2 + 1, rectY + 110 + 1);
 
-            // Vous pouvez aussi ajouter une image de gaufre empoisonnée
-            int imgSize = 60;
-            g2d.drawImage(poison,
-                    (getWidth() - imgSize) / 2,
-                    rectY - imgSize - 10,
-                    imgSize, imgSize, null);
+// Texte (gris clair)
+            g2d.setColor(new Color(230, 230, 230));
+            g2d.drawString(subText, rectX + (rectWidth - subTextWidth)/2, rectY + 110);
+
+// Icône (optionnel)
+            int imgSize = 70;
+            if (poison != null) {
+                g2d.drawImage(poison,
+                        (getWidth() - (2*imgSize))/2,
+                        rectY - 2*imgSize - 5,
+                        2*imgSize, 2*imgSize, null);
+            }
         }
 
 

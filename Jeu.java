@@ -2,71 +2,178 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Jeu {
+    int ligne,colonne;
     Vue vue;
     Gauffre gauffre;
     contolMouseMotion controleSouris;
+    private final JFrame frame;
+    public JLabel turn;
+    private JPanel boutonsPanel;
 
-    IA ia; 
-    private boolean tourJoueur; // true = tour du joueur, false = tour de l'IA
+    public Jeu(JFrame frame) {
+        this.frame = frame;
+        this.boutonsPanel = new JPanel();
+        showConfigScreen();
+    }
+    private void showConfigScreen() {
+        frame.getContentPane().removeAll();
+        frame.setLayout(new BorderLayout());
 
-    public Jeu(JFrame frame, int ligne, int colonne){
-        Gauffre g = new Gauffre(ligne,colonne);
-        this.gauffre =g; 
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+        mainPanel.setBackground(new Color(240, 240, 245));
 
-        vue = new Vue(ligne, colonne,g);  // Crée une instance de Examen
-        controleSouris=new contolMouseMotion(g,vue);
-        controlSouris controlSouris=new controlSouris(g,vue,this);
-        controlRestart restart=new controlRestart(vue,g);
-        controlannule annule=new controlannule(vue,g);
-        controlrefais refais=new controlrefais(vue,g);
+        JLabel titleLabel = new JLabel("Configuration de la Gauffre", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
 
-        //  1 pour aléatoire
-        ia = new IA(g, 1);
-        tourJoueur = true ;// humain qui commence 
+        JPanel configPanel = new JPanel(new GridBagLayout());
+        configPanel.setBackground(new Color(240, 240, 245));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        Font labelFont = new Font("Arial", Font.PLAIN, 16);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        JLabel rowsLabel = new JLabel("Nombre de lignes :");
+        rowsLabel.setFont(labelFont);
+        configPanel.add(rowsLabel, gbc);
+
+        gbc.gridx = 1;
+        JTextField rowsField = new JTextField();
+        styleTextField(rowsField);
+        configPanel.add(rowsField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        JLabel colsLabel = new JLabel("Nombre de colonnes :");
+        colsLabel.setFont(labelFont);
+        configPanel.add(colsLabel, gbc);
+
+        gbc.gridx = 1;
+        JTextField colsField = new JTextField();
+        styleTextField(colsField);
+        configPanel.add(colsField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(20, 10, 0, 10);
+
+        JButton validateButton = new JButton("Commencer le jeu");
+        styleButton(validateButton);
+        configPanel.add(validateButton, gbc);
+
+        mainPanel.add(configPanel, BorderLayout.CENTER);
+        frame.add(mainPanel, BorderLayout.CENTER);
+
+        validateButton.addActionListener(e -> {
+            try {
+                ligne = Integer.parseInt(rowsField.getText());
+                colonne = Integer.parseInt(colsField.getText());
+
+                if (ligne < 2 || colonne < 2) {
+                    JOptionPane.showMessageDialog(frame,
+                            "Utilisez au moins 2 lignes et 2 colonnes",
+                            "Configuration minimale",
+                            JOptionPane.WARNING_MESSAGE);
+                }
+
+                if (ligne <= 0 || colonne <= 0) {
+                    throw new NumberFormatException();
+                }
+
+                startGame();
+            } catch (NumberFormatException ex) {
+                rowsField.setBackground(new Color(255, 200, 200));
+                colsField.setBackground(new Color(255, 200, 200));
+                JOptionPane.showMessageDialog(frame,
+                        "Veuillez entrer des nombres entiers valides",
+                        "Erreur de saisie",
+                        JOptionPane.ERROR_MESSAGE);
+                rowsField.setBackground(Color.WHITE);
+                colsField.setBackground(Color.WHITE);
+            }
+        });
+
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    private void styleTextField(JTextField textField) {
+        textField.setFont(new Font("Arial", Font.PLAIN, 16));
+        textField.setHorizontalAlignment(JTextField.CENTER);
+        textField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 210)),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        textField.setPreferredSize(new Dimension(100, 30));
+    }
+
+    private void styleButton(JButton button) {
+        button.setFont(new Font("Arial", Font.BOLD, 16));
+        button.setBackground(new Color(70, 130, 180));
+        button.setForeground(Color.WHITE);
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createRaisedBevelBorder(),
+                BorderFactory.createEmptyBorder(10, 25, 10, 25)
+        ));
+        button.setFocusPainted(false);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // Effet de survol
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(100, 150, 200));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(70, 130, 180));
+            }
+        });
+    }
+    private void startGame() {
+        frame.getContentPane().removeAll();
+        gauffre = new Gauffre(ligne, colonne);
+        vue = new Vue(ligne, colonne, gauffre);
+        controleSouris = new contolMouseMotion(gauffre, vue);
+        controlSouris controlSouris = new controlSouris(gauffre, vue);
+        controlRestart restart = new controlRestart(vue,gauffre);
+        controlannule annule = new controlannule(vue, gauffre);
+        controlrefais refais = new controlrefais(vue, gauffre);
+
+
 
         JPanel panel = new JPanel();
-        JButton b1=new JButton("RESTART");
+
+        boutonsPanel=new JPanel();
+        boutonsPanel.add(vue.turn);
+        JButton b1 = new JButton("RESTART");
         b1.setFocusable(false);
         b1.addActionListener(restart);
-        JButton b2=new JButton("<-");
+        JButton b2 = new JButton("<-");
         b2.setFocusable(false);
         b2.addActionListener(annule);
-        JButton b3=new JButton("->");
+        JButton b3 = new JButton("->");
         b3.setFocusable(false);
         b3.addActionListener(refais);
         panel.add(b1);
         panel.add(b2);
         panel.add(b3);
-
-        JPanel container=new JPanel();
+        panel.add(vue.turn);
+        JPanel container = new JPanel();
         container.setLayout(new BorderLayout());
-        container.add(panel,BorderLayout.SOUTH);
+        container.add(panel, BorderLayout.SOUTH);
         vue.addMouseMotionListener(controleSouris);
         vue.addMouseListener(controlSouris);
-        container.add(vue);
-        System.out.println(frame.getWidth()+' '+frame.getHeight());
+        container.add(vue, BorderLayout.CENTER);
+
         frame.add(container);
+        frame.revalidate();
+        frame.repaint();
     }
-
-    public void jouerTourIA() {
-        if (!tourJoueur && gauffre.Perdu == 0) {
-            Timer timer = new javax.swing.Timer(1000, e -> {
-                ia.jouerCoup();         // L'IA joue
-                vue.redessine();        
-                tourJoueur = true;      
-            });
-            timer.setRepeats(false); // !!!! joue une seule fois !!!! 
-            timer.start();           
-        }
-    }
-
-
-    public boolean isTourJoueur() {
-        return tourJoueur;
-    }
-
-    public void setTourJoueur(boolean tourJoueur) {
-        this.tourJoueur = tourJoueur;
-    }
-
 }
