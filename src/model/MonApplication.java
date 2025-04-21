@@ -40,7 +40,7 @@ public class MonApplication implements Runnable {
         Jeu jeu = new Jeu(frame, lignes, colonnes);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 1000);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setVisible(true);
     }
 
