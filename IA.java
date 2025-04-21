@@ -6,6 +6,8 @@ public class IA {
     private Gauffre gauffre;
     private int niveau; // 1 = aleatoire, 2 = non perdant/gagnant, 3 = minimax
     private Random random;
+    private static final int INFINITY = 1000; // Pour Minimax
+    private static final int MAX_PROFONDEUR = 16; //ajustiwha selon taille grille ! attention 16 si <= 4X4 snn beug 
 
     public IA(Gauffre g, int niveau) {
         this.gauffre = g;
@@ -19,9 +21,9 @@ public class IA {
         }
         if(niveau==2){
             jouerFacile();
+        }else if (niveau == 3) {
+            jouerMinimax();
         }
-
-        //pour le reste on va rajouter plus tard : niv 2 et 3
     }
 
     private ArrayList<Point> casesJouables(Gauffre g){
@@ -84,8 +86,110 @@ public class IA {
 
             //si jamais il ne reste quun coup perdant on le joue quand meme
             gauffre.manger(0, 0);
+        }}
+
+
+    //ici minimax 
+    private void jouerMinimax() {
+        Point meilleurCoup = bestchoix();
+        if (meilleurCoup != null) {
+            gauffre.manger(meilleurCoup.x, meilleurCoup.y);
+        }} 
+
+    private Point bestchoix() {
+        int meilleurScore = -INFINITY;
+        Point meilleurCoup = null;
+
+        for (int j = 0; j < gauffre.get_colonne(); j++) {
+            for (int i = 0; i < gauffre.get_ligne(); i++) {
+                if (gauffre.peut_manger(j, i)) {
+                    int[] etatinit = gauffre.getGauffre().clone();
+                    gauffre.manger(j, i);
+
+                    if (estTermine()) {
+                        System.arraycopy(etatinit, 0, gauffre.getGauffre(), 0, etatinit.length);
+                        return new Point(j, i); // On joue ce coup gagnant
+                    }
+
+                    int score = minimax(1, false);
+                    System.arraycopy(etatinit, 0, gauffre.getGauffre(), 0, etatinit.length);
+
+                    if (score > meilleurScore) {
+                        meilleurScore = score;
+                        meilleurCoup = new Point(j, i);
+                    }
+                }
+            }
+        }
+        return meilleurCoup;
+    }
+
+
+    private int minimax(int profondeur, boolean estMax) {
+        if (profondeur >= MAX_PROFONDEUR || estTermine()) {
+            return evaluer(profondeur);
         }
 
+        if (estMax) {
+            int meilleurScore = -INFINITY;
+            for (int j = 0; j < gauffre.get_colonne(); j++) {
+                for (int i = 0; i < gauffre.get_ligne(); i++) {
+                    if (gauffre.peut_manger(j, i)) {
+                        int[] etatInitial = gauffre.getGauffre().clone();
+                        gauffre.manger(j, i);
+                        int score = minimax(profondeur + 1, false);
+                        meilleurScore = Math.max(meilleurScore, score);
+                        System.arraycopy(etatInitial, 0, gauffre.getGauffre(), 0, etatInitial.length);
+                    }
+                }
+            }
+            return meilleurScore;
+        }
 
+        else {
+            int meilleurScore = INFINITY;
+            for (int j = 0; j < gauffre.get_colonne(); j++) {
+                for (int i = 0; i < gauffre.get_ligne(); i++) {
+                    if (gauffre.peut_manger(j, i)) {
+                        int[] etatInitial = gauffre.getGauffre().clone();
+                        gauffre.manger(j, i);
+                        int score = minimax(profondeur + 1, true);
+                        meilleurScore = Math.min(meilleurScore, score);
+                        System.arraycopy(etatInitial, 0, gauffre.getGauffre(), 0, etatInitial.length);
+                    }
+                }
+            }
+            return meilleurScore;
+        }
     }
+
+    private boolean estTermine() {
+        for (int j = 0; j < gauffre.get_colonne(); j++) {
+            for (int i = 0; i < gauffre.get_ligne(); i++) {
+                if (gauffre.peut_manger(j, i)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private int evaluer(int profondeur) {
+        if (estTermine()) {
+            return (profondeur % 2 == 0) ? -1000 + profondeur : 1000 - profondeur;
+        }
+
+        int coupsPossibles = 0;
+        for (int j = 0; j < gauffre.get_colonne(); j++) {
+            for (int i = 0; i < gauffre.get_ligne(); i++) {
+                if (gauffre.peut_manger(j, i)) {
+                    coupsPossibles++;
+                }
+            }
+        }
+
+        return (profondeur % 2 == 0) ? coupsPossibles : -coupsPossibles;
+    }
+
+
 }
