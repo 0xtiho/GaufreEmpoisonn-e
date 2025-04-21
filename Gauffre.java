@@ -27,7 +27,7 @@ public class Gauffre {
         }
         gauffre.get(0).set(0, POISON); // Case empoisonnée en (0,0)
     }
-    public int get_ligne(){
+    public int  get_ligne(){
         return ligne;
     }
     public int get_colonne(){
