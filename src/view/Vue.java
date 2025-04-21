@@ -11,6 +11,7 @@ public class Vue extends JComponent {
     int poisonX, poisonY;
     int widthG, heightG;
     Gauffre gauffre;
+    private String messageFin = "vous avez perdu !";  // Message par défaut
 
     public Vue(int ligne, int colonne, Gauffre g) {
         gaufreNormal = MonApplication.charge("gaufre.png");
@@ -25,6 +26,10 @@ public class Vue extends JComponent {
 
     public void redessine(){
         repaint();
+    }
+    
+    public void setMessageFin(String message) {
+        this.messageFin = message;
     }
 
     public Point pixToCord(Point p) {
@@ -82,11 +87,14 @@ public class Vue extends JComponent {
             g2d.setColor(Color.WHITE);
             Font font = new Font("Arial", Font.BOLD, 24);
             g2d.setFont(font);
-            String text = "Vous avez perdu !";
+            
+            // Utiliser le message personnalisé uniquement si la partie s'est terminée par abandon
+            String text = gauffre.perduParAbandon ? messageFin : "Vous avez perdu !";
             int textWidth = g2d.getFontMetrics().stringWidth(text);
             int textX = rectX + (rectWidth - textWidth) / 2;
             int textY = rectY + 50;
             g2d.drawString(text, textX, textY);
+            
             // Message supplémentaire
             g2d.setFont(font);
             text = "Cliquez pour rejouer";

@@ -47,7 +47,27 @@ public class Jeu {
         b3.setFocusable(false);
         b3.addActionListener(refais);
         
-        // Checkbox pour activer/désactiver l'IA
+        // Bouton pour abandonner
+        JButton abandonButton = new JButton("Abandonner");
+        abandonButton.setFocusable(false);
+        abandonButton.setBackground(new Color(220, 50, 50));
+        abandonButton.setForeground(Color.WHITE);
+        abandonButton.addActionListener(e -> {
+            if (gauffre.Perdu == 0) { // si le jeu n'est pas encore fini 
+                if (JOptionPane.showConfirmDialog(frame,  // confirmation
+                        "Êtes-vous sûr de vouloir abandonner ?", 
+                        "Confirmation d'abandon", 
+                        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    gauffre.Perdu = 1;  // maqrqer la partie comme terminée
+                    gauffre.perduParAbandon = true; // Marquer que la partie est perdue par abandon
+                    vue.setMessageFin(tourJoueur ? "Joueur 1 a abandonné!" : 
+                                     (aiActive ? "Vous avez abandonné contre l'IA!" : "Joueur 2 a abandonné!"));
+                    vue.redessine();
+                }
+            }
+        });
+        
+        // checkbox pour activer désactiver l'IA
         JCheckBox aiCheckBox = new JCheckBox("Activer IA");
         aiCheckBox.setFocusable(false);
         aiCheckBox.addActionListener(e -> {
@@ -58,12 +78,13 @@ public class Jeu {
         panel.add(b1);
         panel.add(b2);
         panel.add(b3);
+        panel.add(abandonButton);  //  dont give up :(
         panel.add(aiCheckBox);
 
         JPanel container=new JPanel();
         container.setLayout(new BorderLayout());
         
-        // Ajouter le status label en haut
+        // ajout le status label en haut
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(statusLabel, BorderLayout.CENTER);
         topPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
@@ -77,7 +98,7 @@ public class Jeu {
         frame.add(container);
     }
 
-    // Méthode pour mettre à jour l'étiquette d'état
+    // methode pour mettre à jour l'étiquette d'état
     private void updateStatusLabel() {
         String mode = aiActive ? "IA" : "2 Joueurs";
         String tour = tourJoueur ? "Joueur 1" : (aiActive ? "IA" : "Joueur 2");

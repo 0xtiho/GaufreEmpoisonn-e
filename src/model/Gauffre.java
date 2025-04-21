@@ -15,6 +15,7 @@ public class Gauffre {
     public final int CHOCOLAT = 0;
     private Point mouseXY;
     public int Perdu=0;
+    public boolean perduParAbandon = false; // flag pour savoir si la partie est perdue par abandon
 
     public Gauffre(int l, int c) {
         this.colonne = c;
@@ -59,6 +60,7 @@ public class Gauffre {
         gauffre = new int[colonne];
         historique = new Historique();
         Perdu = 0;
+        perduParAbandon = false; // Réinitialiser le flag d'abandon lors d'un restart
     }
 
     public void setMouseXY(Point mouseXY) {
