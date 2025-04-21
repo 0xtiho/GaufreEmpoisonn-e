@@ -91,9 +91,12 @@ public class Gauffre {
         return (ligne-gauffre[x] > y && (x != 0 || y != 0));
     }
     
-    public void manger(int x, int y){
+    public void manger(int x, int y,boolean b){
         if (peut_manger(x, y)) {
-            tour=1+((tour)%2);
+            if (b){
+                tour=1+((tour)%2);
+            }
+
 
             EtatGauffre nouvelEtat = new EtatGauffre(new Point(x, y));
             
