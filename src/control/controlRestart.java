@@ -9,19 +9,13 @@ import view.Vue;
 public class controlRestart implements ActionListener {
     private Vue vue;
     private Gauffre g;
-    private Jeu jeu;
-    
-    public controlRestart(Vue v, Gauffre g, Jeu jeu){
-        this.vue = v;
-        this.g = g;
-        this.jeu = jeu;
+    public controlRestart(Vue v,Gauffre g){
+        this.vue=v;
+        this.g=g;
     }
-    
     @Override
     public void actionPerformed(ActionEvent e){
         g.resetgame();
-        // Remettre le tour au joueur 1
-        jeu.setTourJoueur(true);
         vue.redessine();
     }
 }

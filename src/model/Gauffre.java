@@ -15,7 +15,7 @@ public class Gauffre {
     public final int CHOCOLAT = 0;
     private Point mouseXY;
     public int Perdu=0;
-    public boolean perduParAbandon = false; // flag pour savoir si la partie est perdue par abandon
+    public int tour=1;
 
     public Gauffre(int l, int c) {
         this.colonne = c;
@@ -59,8 +59,9 @@ public class Gauffre {
     public void resetgame(){
         gauffre = new int[colonne];
         historique = new Historique();
+        tour=1;
         Perdu = 0;
-        perduParAbandon = false; // Réinitialiser le flag d'abandon lors d'un restart
+        Jeu.showConfigScreen();
     }
 
     public void setMouseXY(Point mouseXY) {
@@ -87,8 +88,11 @@ public class Gauffre {
         return (ligne-gauffre[x] > y && (x != 0 || y != 0));
     }
     
-    public void manger(int x, int y){
+    public void manger(int x, int y,boolean b){
         if (peut_manger(x, y)) {
+            if (b){
+                tour=1+((tour)%2);
+            }
             EtatGauffre nouvelEtat = new EtatGauffre(new Point(x, y));
             
             for (int i = x; i < colonne; i++) {
