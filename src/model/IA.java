@@ -12,12 +12,14 @@ public class IA {
     private static final int MAX_PROFONDEUR = 16; //ajustiwha selon taille grille ! attention 16 si <= 4X4 snn beug
 
     public IA(Gauffre g, int niveau) {
+        System.out.println("IA con "+ niveau);
         this.gauffre = g;
         this.niveau = niveau;
         this.random = new Random();
     }
 
     public void jouerCoup() {
+        System.out.println("niveauIA "+niveau);
         if (niveau == 1) {
             jouerAleatoire();
         }
@@ -44,11 +46,16 @@ public class IA {
     private void jouerAleatoire() {
         ArrayList<Point> coupsPossibles=casesJouables(gauffre);
         // coup choisi random
-        int indexAleatoire = random.nextInt(coupsPossibles.size());
-        Point coupChoisi = coupsPossibles.get(indexAleatoire);
+        if(coupsPossibles.size()!=0) {
+            int indexAleatoire = random.nextInt(coupsPossibles.size());
+            Point coupChoisi = coupsPossibles.get(indexAleatoire);
 
-        //play
-        gauffre.manger(coupChoisi.x, coupChoisi.y,true);
+            //play
+            gauffre.manger(coupChoisi.x, coupChoisi.y, true);
+        }
+        else{
+            gauffre.manger(0,0,true);
+        }
     }
 
     private Gauffre copieGauffre() {
@@ -75,9 +82,9 @@ public class IA {
                 return;
             }
         }
-        int indexAleatoire = random.nextInt(coupsPossibles.size());
-        Point coupChoisi = coupsPossibles.get(indexAleatoire);
-        if(coupsPossibles.size()!=1){
+        if(coupsPossibles.size()!=0){
+            int indexAleatoire = random.nextInt(coupsPossibles.size());
+            Point coupChoisi = coupsPossibles.get(indexAleatoire);
             while(coupChoisi.x==0 && coupChoisi.y==0){
                 indexAleatoire = random.nextInt(coupsPossibles.size());
                 coupChoisi = coupsPossibles.get(indexAleatoire);
@@ -93,10 +100,32 @@ public class IA {
 
     //ici minimax
     private void jouerMinimax() {
+        // Vérifier s'il ne reste que la case (0,0)
+        boolean seulement00 = true;
+        for (int j = 0; j < gauffre.get_colonne(); j++) {
+            for (int i = 0; i < gauffre.get_ligne(); i++) {
+                if (gauffre.peut_manger(j, i) && !(j == 0 && i == 0)) {
+                    seulement00 = false;
+                    break;
+                }
+            }
+            if (seulement00) {
+                gauffre.manger(0,0,true);
+            };
+        }
+
+        // Si seulement (0,0) reste, on la mange
+        if (seulement00 && gauffre.peut_manger(0, 0)) {
+            gauffre.manger(0, 0, true);
+            return;
+        }
+
+        // Sinon, on utilise minimax normalement
         Point meilleurCoup = bestchoix();
         if (meilleurCoup != null) {
-            gauffre.manger(meilleurCoup.x, meilleurCoup.y,true);
-        }}
+            gauffre.manger(meilleurCoup.x, meilleurCoup.y, true);
+        }
+    }
 
     private Point bestchoix() {
         int meilleurScore = -INFINITY;

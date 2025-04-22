@@ -36,9 +36,10 @@ public class controlSouris implements MouseListener {
         if (ia!=null && gauffre.tour==2) {
             Timer timer = new Timer(1000, evt -> {
                 vue.removeMouseListener(this);
+
                 ia.jouerCoup();
                 vue.redessine();
-               vue.addMouseListener(this);
+                vue.addMouseListener(this);
             });
             timer.setRepeats(false);
             timer.start();

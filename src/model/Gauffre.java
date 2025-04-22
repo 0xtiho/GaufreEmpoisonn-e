@@ -40,6 +40,7 @@ public class Gauffre {
                 int ancienneValeur = entry.getValue();
                 gauffre[colonne] = ancienneValeur;
             }
+            verifierPerdu();
         }
     }
 
@@ -84,14 +85,15 @@ public class Gauffre {
     }
 
     public boolean peut_manger(int x, int y){
-        return (ligne-gauffre[x] > y );
+        return (ligne-gauffre[x] > y &&(x!=0 || y!=0));
     }
     
     public void manger(int x, int y,boolean b){
+        if(x==0 && y==0 && b){
+            Perdu=1;
+        }
         if (peut_manger(x, y)) {
-            if(x==0 && y==0){
-                Perdu=1;
-            }
+
             if (b && Perdu==0){
                 tour=1+((tour)%2);
             }
@@ -122,7 +124,10 @@ public class Gauffre {
             }
         }
     }
-
+    
+    private void verifierPerdu() {
+        Perdu = (!(peut_manger(0,1) || peut_manger(1,0))) ? 1 : 0;
+    }
 
     public void afficher() {
         for (int i = 0; i < ligne; i++) {
