@@ -10,12 +10,14 @@ public class IA {
     private static final int MAX_PROFONDEUR = 16; //ajustiwha selon taille grille ! attention 16 si <= 4X4 snn beug
 
     public IA(Gauffre g, int niveau) {
+        System.out.println("IA con "+ niveau);
         this.gauffre = g;
         this.niveau = niveau;
         this.random = new Random();
     }
 
     public void jouerCoup() {
+        System.out.println("niveauIA "+niveau);
         if (niveau == 1) {
             jouerAleatoire();
         }

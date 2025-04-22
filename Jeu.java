@@ -13,6 +13,7 @@ public class Jeu {
     private static JPanel boutonsPanel;
     static IA ia=null ;
     private static boolean vsAI = false; // false par défaut (2 joueurs)
+    static int iaLevel;
 
     public Jeu(JFrame frame) {
         this.frame = frame;
@@ -115,12 +116,8 @@ public class Jeu {
                 ligne = Integer.parseInt(rowsField.getText());
                 colonne = Integer.parseInt(colsField.getText());
                 vsAI = onePlayerBtn.isSelected(); // Sauvegarde du mode de jeu
-                int iaLevel = iaLevelCombo.getSelectedIndex() + 1;
-                if (vsAI) {
-                    ia = new IA(gauffre, iaLevel);
-                } else {
-                    ia = null;
-                }
+                iaLevel = iaLevelCombo.getSelectedIndex() + 1;
+                System.out.println("iaLevel "+iaLevel);
 
                 if (ligne < 2 || colonne < 2) {
                     JOptionPane.showMessageDialog(frame,
@@ -185,9 +182,12 @@ public class Jeu {
         frame.getContentPane().removeAll();
         gauffre = new Gauffre(ligne, colonne);
         vue = new Vue(ligne, colonne, gauffre);
-        if(vsAI){
-            ia = new IA(gauffre,3);
+        if (vsAI) {
+            ia = new IA(gauffre, iaLevel);
+        } else {
+            ia = null;
         }
+
 
         controleSouris = new contolMouseMotion(gauffre, vue);
         controlSouris controlSouris = new controlSouris(gauffre, vue,ia);
