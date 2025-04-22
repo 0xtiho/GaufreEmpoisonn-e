@@ -83,14 +83,15 @@ public class Gauffre {
     }
 
     public boolean peut_manger(int x, int y){
-        return (ligne-gauffre[x] > y );
+        return (ligne-gauffre[x] > y &&(x!=0 || y!=0));
     }
     
     public void manger(int x, int y,boolean b){
+        if(x==0 && y==0 && b){
+            Perdu=1;
+        }
         if (peut_manger(x, y)) {
-            if(x==0 && y==0){
-                Perdu=1;
-            }
+
             if (b && Perdu==0){
                 tour=1+((tour)%2);
             }

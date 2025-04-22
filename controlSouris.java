@@ -34,7 +34,7 @@ public class controlSouris implements MouseListener {
 
                 ia.jouerCoup();
                 vue.redessine();
-               vue.addMouseListener(this);
+                vue.addMouseListener(this);
             });
             timer.setRepeats(false);
             timer.start();
