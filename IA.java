@@ -7,7 +7,7 @@ public class IA {
     private int niveau; // 1 = aleatoire, 2 = non perdant/gagnant, 3 = minimax
     private Random random;
     private static final int INFINITY = 1000; // Pour Minimax
-    private static final int MAX_PROFONDEUR = 16; //ajustiwha selon taille grille ! attention 16 si <= 4X4 snn beug 
+    private static final int MAX_PROFONDEUR = 6; //ajustiwha selon taille grille ! attention 16 si <= 4X4 snn beug 
 
     public IA(Gauffre g, int niveau) {
         this.gauffre = g;
@@ -97,8 +97,8 @@ public class IA {
         }} 
 
     private Point bestchoix() {
-        int meilleurScore = -INFINITY;
-        Point meilleurCoup = null;
+        int meilleurScore = -INFINITY; //initialise le score tres bas pour monter au max
+        Point meilleurCoup = null; //jai rien ! je stock un coup meilleur 
 
         for (int j = 0; j < gauffre.get_colonne(); j++) {
             for (int i = 0; i < gauffre.get_ligne(); i++) {
@@ -107,30 +107,32 @@ public class IA {
                     gauffre.manger(j, i);
 
                     if (estTermine()) {
-                        System.arraycopy(etatinit, 0, gauffre.getGauffre(), 0, etatinit.length);
+                        System.arraycopy(etatinit, 0, gauffre.getGauffre(), 0, etatinit.length); // On remet l'état initial
                         return new Point(j, i); // On joue ce coup gagnant
                     }
 
-                    int score = minimax(1, false);
+                    //sinon on evalue le coup avec minimax 
+                    int score = minimax(1, false); //c le joueur qui joue
                     System.arraycopy(etatinit, 0, gauffre.getGauffre(), 0, etatinit.length);
 
                     if (score > meilleurScore) {
                         meilleurScore = score;
-                        meilleurCoup = new Point(j, i);
+                        meilleurCoup = new Point(j, i); 
+                        //on garde en memoire le meilleur coup et son score
                     }
                 }
             }
         }
-        return meilleurCoup;
+        return meilleurCoup; 
     }
 
 
     private int minimax(int profondeur, boolean estMax) {
         if (profondeur >= MAX_PROFONDEUR || estTermine()) {
-            return evaluer(profondeur);
+            return evaluer(profondeur); 
         }
 
-        if (estMax) {
+        if (estMax) { //ia joue maximise son score 
             int meilleurScore = -INFINITY;
             for (int j = 0; j < gauffre.get_colonne(); j++) {
                 for (int i = 0; i < gauffre.get_ligne(); i++) {
@@ -138,23 +140,27 @@ public class IA {
                         int[] etatInitial = gauffre.getGauffre().clone();
                         gauffre.manger(j, i);
                         int score = minimax(profondeur + 1, false);
+                        //Appelle recurs minimax pour evaluer la position après le coup simulé
+                        //prof +1 passe au niveau suivant
+                        //score val de cette branche de l'arbre
                         meilleurScore = Math.max(meilleurScore, score);
                         System.arraycopy(etatInitial, 0, gauffre.getGauffre(), 0, etatInitial.length);
+                        //restore l'état initial de la gauffre après le coup simulé
                     }
                 }
             }
             return meilleurScore;
         }
 
-        else {
+        else { //humain minimise score ia 
             int meilleurScore = INFINITY;
             for (int j = 0; j < gauffre.get_colonne(); j++) {
                 for (int i = 0; i < gauffre.get_ligne(); i++) {
                     if (gauffre.peut_manger(j, i)) {
                         int[] etatInitial = gauffre.getGauffre().clone();
                         gauffre.manger(j, i);
-                        int score = minimax(profondeur + 1, true);
-                        meilleurScore = Math.min(meilleurScore, score);
+                        int score = minimax(profondeur + 1, true); 
+                        meilleurScore = Math.min(meilleurScore, score); //ici n minimise 
                         System.arraycopy(etatInitial, 0, gauffre.getGauffre(), 0, etatInitial.length);
                     }
                 }
@@ -174,9 +180,11 @@ public class IA {
         return true;
     }
 
+    //La fonction evaluer attribue un score à une position dans la grille pour guider l’IA dans ses choix via minimax
     private int evaluer(int profondeur) {
         if (estTermine()) {
             return (profondeur % 2 == 0) ? -1000 + profondeur : 1000 - profondeur;
+            //si partie terminé a profondeur pair (ia qui joue) defaite pour lia score negatif 
         }
 
         int coupsPossibles = 0;
@@ -188,7 +196,7 @@ public class IA {
             }
         }
 
-        return (profondeur % 2 == 0) ? coupsPossibles : -coupsPossibles;
+        return (profondeur % 2 == 0) ? coupsPossibles : -coupsPossibles; //postif favorable pour ia, negatif defavorable pour ia 
     }
 
 
